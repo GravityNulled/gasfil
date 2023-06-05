@@ -45,7 +45,8 @@ model User {
   image         String?
   password      String
   phone         String
-  address      String
+  address       String
+  city          String
 
 
   accounts      Account[]
@@ -69,26 +70,28 @@ model GasProduct {
   description        String
   price              Float
   quantity_available Int
+  image              String
+  size               Int
 }
 
 model Order {
-  id           String   @id @default(cuid())
-  order_date  DateTime @updatedAt
-  status      String   @default("pending")
-  total_amount Float
-  userId     String
+  id              String   @id @default(cuid())
+  order_date      DateTime @updatedAt
+  status          String   @default("pending")
+  total_amount    Float
+  userId          String
   
-  user        User    @relation(fields: [userId], references: [id])
-  payment     PaymentTransaction? 
+  user            User    @relation(fields: [userId], references: [id])
+  payment         PaymentTransaction? 
 }
 
 model PaymentTransaction {
   id              String   @id @default(cuid())
-  orderId         String @unique
-  payment_date    DateTime
+  orderId         String   @unique
+  payment_date    DateTime @updatedAt
   payment_method  String
   amount          Float
-  status          String
+  status          String   @default("pending")
   userId          String
 
 
@@ -98,9 +101,11 @@ model PaymentTransaction {
 
 model RefillRequest {
   id              String   @id @default(cuid())
-  request_date DateTime
-  status       String @default("pending")
+  request_date    DateTime @updatedAt
+  status          String @default("pending")
+  size            Int
+  gasType         String
 
-  userId      String
-  user         User   @relation(fields: [userId], references: [id])
+  userId          String
+  user            User   @relation(fields: [userId], references: [id])
 }
