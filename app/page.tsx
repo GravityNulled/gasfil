@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper";
+import { Navigation, Autoplay } from "swiper";
 
 import "swiper/css";
-import "swiper/css/navigation";
 import ProductSection from "@/components/productsSection";
 
 export default function Home() {
@@ -15,7 +14,11 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-center mt-2">
           Best Gas refill station in Kenya
         </h1>
-        <Swiper navigation={true} modules={[Navigation]}>
+        <Swiper
+          autoplay={{ delay: 2500, disableOnInteraction: false }}
+          navigation={true}
+          modules={[Navigation, Autoplay]}
+        >
           <SwiperSlide>
             <div className="flex items-center gap-10">
               <Image
@@ -48,7 +51,13 @@ export default function Home() {
           </SwiperSlide>
         </Swiper>
       </section>
-      <section className="mt-32">{/* <ProductSection /> */}</section>
+      <section className="mt-32">
+        <h2 className="text-3xl font-extrabold text-gray-900 text-center uppercase mb-5">
+          Products
+        </h2>
+
+        <ProductSection />
+      </section>
     </main>
   );
 }
