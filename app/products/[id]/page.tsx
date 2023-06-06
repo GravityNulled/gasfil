@@ -1,13 +1,52 @@
 /* eslint-disable @next/next/no-img-element */
+"use client";
 
-import prisma from "@/utils/client";
+import fetcher from "@/utils/fetcher";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { Oval } from "react-loader-spinner";
+import useSWR from "swr";
+import { GasProduct } from "@prisma/client";
 
-const Products = async ({ params }: { params: { id: string } }) => {
-  const gas = await prisma.gasProduct.findUnique({
-    where: {
-      id: params.id,
-    },
-  });
+const Products = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
+  const { data: gas, isLoading } = useSWR<GasProduct>(
+    `/api/product/${params.id}`,
+    fetcher
+  );
+
+  const handelClick = async () => {
+    try {
+      const res = await axios.post("/api/order", {
+        productId: gas?.id,
+        total_amount: gas?.price,
+        userId: "sa",
+      });
+      console.log(res);
+      router.push("/checkout");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  if (isLoading) {
+    return (
+      <section className="h-screen flex items-center gap-10 justify-center container mx-auto w-5/6">
+        <p className="my-32 text-3xl font-bold uppercase">Loading</p>
+        <Oval
+          height={80}
+          width={80}
+          color="#4fa94d"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="oval-loading"
+          secondaryColor="#4fa94d"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
+      </section>
+    );
+  }
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
       <div className="container px-5 py-24 mx-auto">
@@ -34,7 +73,10 @@ const Products = async ({ params }: { params: { id: string } }) => {
               <span className="title-font font-medium text-2xl text-gray-900">
                 Ksh {gas?.price}
               </span>
-              <button className="flex ml-auto text-white bg-gray-800 border-0 py-2 px-6 focus:outline-none rounded">
+              <button
+                onClick={() => router.push(`/checkout/${gas?.id}`)}
+                className="flex ml-auto text-white bg-gray-800 border-0 py-2 px-6 focus:outline-none rounded"
+              >
                 Order
               </button>
             </div>
