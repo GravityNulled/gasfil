@@ -72,6 +72,8 @@ model GasProduct {
   quantity_available Int
   image              String
   size               Int
+
+  order             Order[]
 }
 
 model Order {
@@ -79,8 +81,10 @@ model Order {
   order_date      DateTime @updatedAt
   status          String   @default("pending")
   total_amount    Float
+  productId       String
   userId          String
   
+  product         GasProduct @relation(fields: [productId], references: [id])
   user            User    @relation(fields: [userId], references: [id])
   payment         PaymentTransaction? 
 }
