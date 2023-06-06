@@ -15,7 +15,7 @@ const Navbar = () => {
             Contact Us
           </Link>
           <Link href="/products" className="font-semibold">
-            Shop
+            Products
           </Link>
           <div className="items-center flex gap-2">
             {session ? (
@@ -31,18 +31,8 @@ const Navbar = () => {
               </div>
             ) : (
               <>
-                <Link
-                  href={"/register"}
-                  className="px-2 bg-primary text-white py-1 uppercase border rounded-md"
-                >
-                  Register
-                </Link>
-                <button
-                  onClick={() => signIn()}
-                  className="px-3 py-1 uppercase border rounded-md"
-                >
-                  Log In
-                </button>
+                <Link href={"/register"}>Register</Link>
+                <button onClick={() => signIn()}>Log In</button>
               </>
             )}
           </div>
