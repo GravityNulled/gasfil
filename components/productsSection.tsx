@@ -4,12 +4,33 @@ import Image from "next/image";
 import { GasProduct } from "@prisma/client";
 import fetcher from "@/utils/fetcher";
 import useSWR from "swr";
+import { Oval } from "react-loader-spinner";
 
 export default function ProductSection() {
   const { data: gases, isLoading } = useSWR<GasProduct[]>(
     `/api/product`,
     fetcher
   );
+  if (isLoading) {
+    return (
+      <section className="h-screen flex items-center gap-10 justify-center container mx-auto w-5/6">
+        <p className="my-32 text-3xl font-bold uppercase">Loading</p>
+        <Oval
+          height={80}
+          width={80}
+          color="#4fa94d"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="oval-loading"
+          secondaryColor="#4fa94d"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
+      </section>
+    );
+  }
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">

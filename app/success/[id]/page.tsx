@@ -7,7 +7,12 @@ import React from "react";
 import useSWR from "swr";
 import { useState } from "react";
 import { format } from "date-fns";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 const Success = ({ params }: { params: { id: string } }) => {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [gas, setGas] = useState<GasProduct>();
   const { data: order, isLoading } = useSWR<Order>(
     `/api/order/${params.id}`,
@@ -21,6 +26,9 @@ const Success = ({ params }: { params: { id: string } }) => {
       setGas(gas.data);
     };
     getGas();
+  }
+  if (!session) {
+    router.push("/login");
   }
   return (
     <div>
@@ -42,10 +50,8 @@ const Success = ({ params }: { params: { id: string } }) => {
         </div>
         <div className="mb-8">
           <h2 className="text-lg font-bold mb-4">Bill To:</h2>
-          <div className="text-gray-700 mb-2">John Doe</div>
-          <div className="text-gray-700 mb-2">123 Main St.</div>
-          <div className="text-gray-700 mb-2">Anytown, USA 12345</div>
-          <div className="text-gray-700">johndoe@example.com</div>
+          <div className="text-gray-700 mb-2">{session?.user?.name}</div>
+          <div className="text-gray-700">{session?.user?.email}</div>
         </div>
         <table className="w-full mb-8">
           <thead>

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Oval } from "react-loader-spinner";
 import useSWR from "swr";
 import { GasProduct } from "@prisma/client";
+import { useState } from "react";
 
 const Products = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -15,19 +16,6 @@ const Products = ({ params }: { params: { id: string } }) => {
     fetcher
   );
 
-  const handelClick = async () => {
-    try {
-      const res = await axios.post("/api/order", {
-        productId: gas?.id,
-        total_amount: gas?.price,
-        userId: "sa",
-      });
-      console.log(res);
-      router.push("/checkout");
-    } catch (error) {
-      console.log(error);
-    }
-  };
   if (isLoading) {
     return (
       <section className="h-screen flex items-center gap-10 justify-center container mx-auto w-5/6">
@@ -74,6 +62,7 @@ const Products = ({ params }: { params: { id: string } }) => {
                 Ksh {gas?.price}
               </span>
               <button
+                disabled={gas?.quantity_available == 0 ? true : false}
                 onClick={() => router.push(`/checkout/${gas?.id}`)}
                 className="flex ml-auto text-white bg-gray-800 border-0 py-2 px-6 focus:outline-none rounded"
               >

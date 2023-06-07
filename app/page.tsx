@@ -3,11 +3,14 @@
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper";
+import toast, { Toaster } from "react-hot-toast";
 
 import "swiper/css";
 import ProductSection from "@/components/productsSection";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
   return (
     <main className="container w-full mx-auto md:w-5/6">
       <section className="mt-32">

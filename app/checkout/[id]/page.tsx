@@ -12,10 +12,21 @@ import fetcher from "@/utils/fetcher";
 import { GasProduct, Order } from "@prisma/client";
 import { Oval } from "react-loader-spinner";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import toast, { Toaster } from "react-hot-toast";
+import { useState } from "react";
 
 const Checkout = ({ params }: { params: { id: string } }) => {
+  const [userId, setUserId] = useState("");
   const router = useRouter();
-
+  const { data: session, status } = useSession();
+  if (status == "authenticated") {
+    const getUser = async () => {
+      const user = await axios.get(`/api/user/${session.user?.email}`);
+      setUserId(user.data.id);
+    };
+    getUser();
+  }
   const { data: gas, isLoading } = useSWR<GasProduct>(
     `/api/product/${params.id}`,
     fetcher
@@ -24,19 +35,22 @@ const Checkout = ({ params }: { params: { id: string } }) => {
   const handleSubmit = async () => {
     try {
       const res = await axios.post<Order>("/api/order", {
-        userId: "clikmzr5k0000d244w6lwoaqe",
+        userId: userId,
         total_amount: gas?.price,
         productId: gas?.id,
       });
+      const amount = await axios.put(`/api/product/${gas?.id}`);
+      toast.success("Order Created... Redirecting to success page");
       router.push(`/success/${res.data.id}`);
     } catch (error) {
+      toast.error("Something went wrong");
       console.log(error);
     }
   };
-
   if (isLoading) {
     return (
       <section className="h-screen flex items-center gap-10 justify-center container mx-auto w-5/6">
+        <Toaster />
         <p className="my-32 text-3xl font-bold uppercase">Loading</p>
         <Oval
           height={80}
